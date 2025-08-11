@@ -15,7 +15,7 @@ program
   .argument('<keyword>', 'Keyword of command preset to run')
   .action(async (keyword) => {
     try {
-      const url = `http://localhost:3000/commands/${keyword}`;
+      const url = `https://thamil-cli-tool.onrender.com/commands/${keyword}`;
       console.log('Fetching command preset from:', url);
 
       const res = await fetch(url);
