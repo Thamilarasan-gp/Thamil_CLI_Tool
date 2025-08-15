@@ -1,15 +1,14 @@
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
+const { body, validationResult } = require('express-validator'); // For input validation
 
 const app = express();
 app.use(express.json());
 
 // Connect MongoDB
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-}).then(() => console.log('MongoDB connected'))
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log('MongoDB connected'))
   .catch(err => console.error('MongoDB connection error:', err));
 
 // Schema and Model
@@ -26,8 +25,16 @@ const Command = mongoose.model('Command', commandSchema);
 
 // Routes
 
-app.post('/commands', async (req, res) => {
+app.post('/commands', [
+  body('keyword').isString().notEmpty(),
+  body('commands').isArray().notEmpty(),
+  body('prerequisites').isArray(),
+], async (req, res) => {
   console.log('POST /commands received:', req.body);
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
   try {
     const cmd = new Command(req.body);
     await cmd.save();
@@ -43,13 +50,12 @@ app.post('/test', (req, res) => {
   console.log('POST /test received:', req.body);
   res.json({ status: 'success', received: req.body });
 });
-// Get command preset by keyword
+
 app.get('/commands/:keyword', async (req, res) => {
   const keyword = req.params.keyword.trim();
   console.log('GET /commands/:keyword - Searching for:', JSON.stringify(keyword));
   try {
     const cmd = await Command.findOne({ keyword });
-    console.log('Found command:', cmd);
     if (!cmd) return res.status(404).json({ error: 'Command not found' });
     res.json(cmd);
   } catch (err) {

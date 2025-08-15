@@ -4,22 +4,22 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start":"nodemon server.js"
-    
+    "start": "nodemon server.js"
   },
   "bin": {
-  "thamil": "./cli.js"
-},
+    "thamil": "./cli.js"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
     "commander": "^14.0.0",
+    "cors": "^2.8.5",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
+    "express-rate-limit": "^8.0.1",
     "mongoose": "^8.17.1",
     "node-fetch": "^2.7.0"
   }
-  
 }
